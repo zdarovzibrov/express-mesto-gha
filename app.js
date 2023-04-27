@@ -51,7 +51,7 @@ app.use(errors());
 
 app.use((req, res) => {
   res.status(404).send({
-    message: 'Такого адреса не существует',
+    message: 'Такого адреса не существует.',
   });
 });
 

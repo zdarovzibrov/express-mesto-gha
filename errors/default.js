@@ -3,7 +3,7 @@ module.exports = ((err, req, res, next) => {
 
   res.status(statusCode).send({
     message: statusCode === 500
-      ? 'Ошибка данных с сервера'
+      ? 'Ошибка данных с сервера.'
       : message,
   });
   next();

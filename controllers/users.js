@@ -32,7 +32,7 @@ const createUser = (req, res, next) => {
       }))
       .catch((err) => {
         if (err.code === 11000) {
-          next(new ConflictError('Пользователь с таким email уже существует'));
+          next(new ConflictError('Пользователь с таким email уже существует.'));
         }
       });
   });
@@ -44,12 +44,12 @@ const login = (req, res, next) => {
   User.findOne({ email }).select('+password')
     .then((user) => {
       if (!user) {
-        throw new UnauthorizedError('Пользователь не найден');
+        throw new UnauthorizedError('Пользователь не найден.');
       }
       return bcrypt.compare(password, user.password)
         .then((matched) => {
           if (!matched) {
-            next(new UnauthorizedError('Не правильно указан логин или пароль'));
+            next(new UnauthorizedError('Не правильно указан логин или пароль.'));
           }
           const token = jwt.sign({ _id: user._id }, 'super-secret-key', { expiresIn: '7d' });
           return res.send({ token });
@@ -101,7 +101,7 @@ const getCurrentUser = (req, res, next) => {
   User.findById(req.user._id)
     .then((user) => {
       if (!user) {
-        throw new NotFoundError('Пользователь не найден');
+        throw new NotFoundError('Пользователь не найден.');
       }
       return res.send(user);
     })
