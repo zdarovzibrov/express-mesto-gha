@@ -17,12 +17,13 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.post(
   '/signup',
   celebrate({
-    body: Joi.object()
-      .keys({
-        email: Joi.string().required().email(),
-        password: Joi.string().required(),
-      })
-      .unknown(true),
+    body: Joi.object().keys({
+      name: Joi.string().min(2).max(30),
+      about: Joi.string().min(2).max(30),
+      avatar: Joi.string().regex(urlRegEx),
+      email: Joi.string().required().email(),
+      password: Joi.string().required(),
+    }).unknown(true),
   }),
   createUser
 );
@@ -30,12 +31,10 @@ app.post(
 app.post(
   '/signin',
   celebrate({
-    body: Joi.object()
-      .keys({
-        email: Joi.string().required().email(),
-        password: Joi.string().required(),
-      })
-      .unknown(true),
+    body: Joi.object().keys({
+      email: Joi.string().required().email(),
+      password: Joi.string().required(),
+    }).unknown(true),
   }),
   login
 );
