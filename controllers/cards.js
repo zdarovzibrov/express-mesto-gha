@@ -5,7 +5,10 @@ const Card = require('../models/card');
 const getAllCards = (req, res, next) => {
   Card.find({})
     .then((cards) => {
-      res.status(201).send(cards);
+      if (!cards) {
+        throw new NotFoundError('Карточки не найдены.');
+      }
+      return res.send(cards);
     })
     .catch(next);
 };
@@ -36,7 +39,11 @@ const deleteCard = (req, res, next) => {
 };
 
 const likeCard = (req, res, next) => {
-  Card.findByIdAndUpdate(req.params.cardId, { $addToSet: { likes: req.user._id } }, { new: true })
+  Card.findByIdAndUpdate(
+    req.params.cardId,
+    { $addToSet: { likes: req.user._id } },
+    { new: true }
+  )
     .then((card) => {
       if (!card) {
         throw new NotFoundError('Информация по карточке не найдена.');
@@ -47,7 +54,11 @@ const likeCard = (req, res, next) => {
 };
 
 const dislikeCard = (req, res, next) => {
-  Card.findByIdAndUpdate(req.params.cardId, { $pull: { likes: req.user._id } }, { new: true })
+  Card.findByIdAndUpdate(
+    req.params.cardId,
+    { $pull: { likes: req.user._id } },
+    { new: true }
+  )
     .then((card) => {
       if (!card) {
         throw new NotFoundError('Информация по карточке не найдена.');
