@@ -1,5 +1,6 @@
 const ForbiddenError = require('../errors/forbidden');
 const NotFoundError = require('../errors/notfound');
+const BadRequestError = require('../errors/badrequest');
 const Card = require('../models/card');
 
 const getAllCards = (req, res, next) => {
@@ -21,21 +22,35 @@ const createCard = (req, res, next) => {
     .then((newCard) => {
       res.status(201).send(newCard);
     })
-    .catch(next);
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        next(new BadRequestError('Некорректные данные при создании карточки.'));
+      } else {
+        next(err);
+      }
+    });
 };
 
 const deleteCard = (req, res, next) => {
-  Card.findByIdAndRemove(req.params.cardId)
+  Card.findById(req.params.cardId)
     .then((card) => {
       if (!card) {
         throw new NotFoundError('Информация по карточке не найдена.');
       }
-      if (card.owner.toString() !== req.user._id) {
+      if (!card.owner.equals(req.user._id)) {
         throw new ForbiddenError('Нет прав на удаление.');
       }
-      return res.send(card);
+      card.deleteOne()
+        .then(() => res.status(200).send({ message: 'Карточка удалена.' }))
+        .catch(next);
     })
-    .catch(next);
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        next(new BadRequestError('Некорректный id.'));
+      } else {
+        next(err);
+      }
+    });
 };
 
 const likeCard = (req, res, next) => {
