@@ -11,7 +11,7 @@ const { REGEXP } = require('../utils/constants');
 
 usersRouter.patch('/me/avatar', celebrate({
   body: Joi.object().keys({
-    avatar: Joi.string().required().pattern(REGEXP),
+    avatar: Joi.string().required().regex(REGEXP),
   }),
 }), updateAvatar);
 
