@@ -8,6 +8,7 @@ const defaultError = require('./errors/default');
 const { createUser, login } = require('./controllers/users');
 const auth = require('./middlewares/auth');
 const { REGEXP } = require('./utils/constants');
+const NotFoundError = require('./errors/notfound');
 
 const app = express();
 
@@ -47,10 +48,8 @@ app.use(router);
 
 app.use(errors());
 
-app.use((req, res) => {
-  res.status(404).send({
-    message: 'Запрошен несуществующий роут',
-  });
+app.use((req, res, next) => {
+  next(new NotFoundError('Такой страницы не существует'));
 });
 
 app.use(defaultError);
