@@ -32,7 +32,7 @@ const createCard = (req, res, next) => {
 };
 
 const deleteCard = (req, res, next) => {
-  Card.findById({ _id: req.params.cardId })
+  Card.findById(req.params.cardId)
     .then((card) => {
       if (!card) {
         throw new NotFoundError('Информация по карточке не найдена.');
@@ -40,7 +40,7 @@ const deleteCard = (req, res, next) => {
       if (!card.owner.equals(req.user._id)) {
         throw new ForbiddenError('Нет прав на удаление.');
       }
-      Card.deleteOne({ _id: req.params.cardId })
+      Card.findByIdAndRemove(req.params.cardId)
         .then(() => res.status(200).send({ message: 'Карточка удалена.' }))
         .catch(next);
     })
