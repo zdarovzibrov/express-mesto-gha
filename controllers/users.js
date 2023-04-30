@@ -112,7 +112,15 @@ const updateAvatar = (req, res, next) => {
       }
       return res.send(user);
     })
-    .catch(next);
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        next(
+          new BadRequestError('Некорректные данные при обновлении аватара.')
+        );
+      } else {
+        next(err);
+      }
+    });
 };
 
 const getCurrentUser = (req, res, next) => {
