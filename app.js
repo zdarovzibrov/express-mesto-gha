@@ -8,13 +8,15 @@ const defaultError = require('./errors/default');
 const { createUser, login } = require('./controllers/users');
 const auth = require('./middlewares/auth');
 const { REGEXP } = require('./utils/constants');
-const { NotFoundError } = require('./errors/notfound');
 
 const app = express();
+
+mongoose.connect('mongodb://127.0.0.1:27017/mestodb');
 
 app.use(helmet());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(defaultError);
 
 app.post(
   '/signup',
@@ -46,13 +48,22 @@ app.use(router);
 
 app.use(errors());
 
-app.use((req, res, next) => {
-  next(new NotFoundError('Такого адреса не существует.'));
+app.use((req, res) => {
+  res.status(404).send({
+    message: 'Запрошен несуществующий роут',
+  });
 });
 
-app.use(defaultError);
+app.use((err, req, res, next) => {
+  console.log(err);
+  const { statusCode = 500, message } = err;
 
-mongoose.connect('mongodb://127.0.0.1:27017/mestodb');
+  res.status(statusCode).send({
+    message: statusCode === 500 ? 'Ошибка данных с сервера.' : message,
+  });
+
+  next();
+});
 
 app.listen(3000, () => {
   console.log('This server is start on 3000');
