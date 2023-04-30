@@ -18,7 +18,9 @@ const getAllUsers = (req, res, next) => {
 };
 
 const createUser = (req, res, next) => {
-  const { name, about, avatar, email, password } = req.body;
+  const {
+    name, about, avatar, email, password
+  } = req.body;
   bcrypt
     .hash(password, 10)
     .then((hash) => {
@@ -29,14 +31,12 @@ const createUser = (req, res, next) => {
         email,
         password: hash,
       })
-        .then((newUser) =>
-          res.status(201).send({
-            name: newUser.name,
-            about: newUser.about,
-            avatar: newUser.avatar,
-            email: newUser.email,
-          })
-        )
+        .then((newUser) => res.status(201).send({
+          name: newUser.name,
+          about: newUser.about,
+          avatar: newUser.avatar,
+          email: newUser.email,
+        }))
         .catch((err) => {
           if (err.code === 11000) {
             next(
@@ -44,9 +44,7 @@ const createUser = (req, res, next) => {
             );
           } else if (err.name === 'ValidationError') {
             next(
-              new BadRequestError(
-                'Некорректные данные при создании пользователя.'
-              )
+              new BadRequestError('Некорректные данные при создании пользователя.')
             );
           } else {
             next(err);
