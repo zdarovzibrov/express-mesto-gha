@@ -33,15 +33,17 @@ const createCard = (req, res, next) => {
 
 const deleteCard = (req, res, next) => {
   Card.findById(req.params.cardId)
-    .then((card) => {
-      if (!card) {
-        throw new NotFoundError('Информация по карточке не найдена.');
+    .then((reqCard) => {
+      if (!reqCard) {
+        throw new NotFoundError('Некорректный Id');
       }
-      if (card.owner.toString() === req.user._id) {
-        Card.findByIdAndDelete({ _id: req.params.cardId })
-          .then(() => res.status(200).send({ message: 'Карточка удалена.' }));
+      if (reqCard.owner.toString() === req.user._id) {
+        Card.findByIdAndRemove(req.params.cardId)
+          .then((card) => {
+            res.send({ data: card });
+          });
       } else {
-        throw new ForbiddenError('Нет прав на удаление.');
+        next(new ForbiddenError('Это не ваша карточка'));
       }
     })
     .catch((err) => {
