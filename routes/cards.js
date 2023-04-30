@@ -46,7 +46,7 @@ cardsRouter.delete(
   '/:cardId',
   celebrate({
     params: Joi.object().keys({
-      cardId: Joi.string().hex().length(24),
+      cardId: Joi.string().length(24).hex().required(),
     }),
   }),
   deleteCard

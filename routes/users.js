@@ -11,14 +11,14 @@ const { REGEXP } = require('../utils/constants');
 
 usersRouter.patch('/me/avatar', celebrate({
   body: Joi.object().keys({
-    avatar: Joi.string().required().regex(REGEXP),
+    avatar: Joi.string().regex(REGEXP),
   }),
 }), updateAvatar);
 
 usersRouter.patch('/me', celebrate({
   body: Joi.object().keys({
-    name: Joi.string().required().min(2).max(30),
-    about: Joi.string().required().min(2).max(30),
+    name: Joi.string().min(2).max(30),
+    about: Joi.string().min(2).max(30),
   }),
 }), editProfile);
 
