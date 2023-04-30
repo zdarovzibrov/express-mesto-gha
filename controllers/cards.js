@@ -32,6 +32,7 @@ const createCard = (req, res, next) => {
 };
 
 const deleteCard = (req, res, next) => {
+  const { _id } = req.user;
   Card.findById(req.params.cardId)
     .then((card) => {
       if (!card) {
