@@ -32,7 +32,7 @@ const createCard = (req, res, next) => {
 };
 
 const deleteCard = (req, res, next) => {
-  const cardId = req.params.cardId;
+  const { cardId } = req.params;
   const userId = req.user._id;
 
   Card.findById(cardId)
@@ -57,7 +57,7 @@ const deleteCard = (req, res, next) => {
         next(err);
       }
     });
-}
+};
 
 const likeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
