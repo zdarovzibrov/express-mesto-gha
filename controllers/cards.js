@@ -19,15 +19,15 @@ const createCard = (req, res, next) => {
   const { name, link } = req.body;
 
   Card.create({ name, link, owner: _id })
-    .then((newCard) => {
-      res.status(201).send(newCard);
+    .then((card) => {
+      res.status(201).send(card);
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new BadRequestError('Некорректные данные при создании карточки.'));
-        return;
+      } else {
+        next(err);
       }
-      next(err);
     });
 };
 
@@ -40,7 +40,7 @@ const deleteCard = (req, res, next) => {
       if (!card.owner.equals(req.user._id)) {
         throw new ForbiddenError('Нет прав на удаление.');
       }
-      card.deleteOne()
+      Card.deleteOne({ _id: req.params.cardId })
         .then(() => res.status(200).send({ message: 'Карточка удалена.' }))
         .catch(next);
     })
