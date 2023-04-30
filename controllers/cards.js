@@ -32,7 +32,7 @@ const createCard = (req, res, next) => {
 };
 
 const deleteCard = (req, res, next) => {
-  Card.findById(req.params.cardId)
+  Card.findById({ _id: req.params.cardId })
     .then((card) => {
       if (!card) {
         throw new NotFoundError('Информация по карточке не найдена.');
