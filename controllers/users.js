@@ -59,7 +59,7 @@ const login = (req, res, next) => {
       return bcrypt.compare(password, user.password)
         .then((matched) => {
           if (!matched) {
-            next(new UnauthorizedError('Не правильно указан логин или пароль.'));
+            return next(new UnauthorizedError('Не правильно указан логин или пароль.'));
           }
           const token = jwt.sign({ _id: user._id }, 'super-secret-key', { expiresIn: '7d' });
           return res.send({ token });
