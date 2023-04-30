@@ -38,18 +38,14 @@ const deleteCard = (req, res, next) => {
         throw new NotFoundError('Информация по карточке не найдена.');
       }
       if (!card.owner.equals(req.user._id)) {
+        card.findByIdAndRemove(req.params.cardId)
+          .then(() => res.status(200).send({ message: 'Карточка удалена.' }));
+      } else {
         throw new ForbiddenError('Нет прав на удаление.');
       }
-      card.deleteOne()
-        .then(() => res.status(200).send({ message: 'Карточка удалена.' }))
-        .catch(next);
     })
     .catch((err) => {
-      if (err.name === 'CastError') {
-        next(new BadRequestError('Некорректный id.'));
-      } else {
-        next(err);
-      }
+      next(err);
     });
 };
 
