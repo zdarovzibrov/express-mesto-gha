@@ -37,7 +37,7 @@ const deleteCard = (req, res, next) => {
       if (!card) {
         throw new NotFoundError('Информация по карточке не найдена.');
       }
-      if (!card.owner.equals(req.user._id)) {
+      if (card.owner.toString() === req.user._id) {
         card.findByIdAndRemove(req.params.cardId)
           .then(() => res.status(200).send({ message: 'Карточка удалена.' }));
       } else {
