@@ -32,28 +32,32 @@ const createCard = (req, res, next) => {
 };
 
 const deleteCard = (req, res, next) => {
-  Card.findById(req.params.cardId)
+  const cardId = req.params.cardId;
+  const userId = req.user._id;
+
+  Card.findById(cardId)
     .then((card) => {
       if (!card) {
-        throw new NotFoundError('Информация по карточке не найдена.');
+        throw new NotFoundError('Карточка не найдена');
       }
-      if (!card.owner.equals(req.user._id)) {
-        throw new ForbiddenError('Нет прав на удаление.');
+
+      if (!card.owner.equals(userId)) {
+        throw new ForbiddenError('У вас нет прав на удаление этой карточки');
       }
-      card.deleteOne()
-        .then(() => res.status(200).send({ message: 'Карточка удалена.' }))
-        .catch((err) => {
-          next(err);
-        });
+
+      return Card.deleteOne({ _id: cardId });
+    })
+    .then(() => {
+      res.status(200).send({ message: 'Карточка удалена' });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        next(new BadRequestError('Некорректный id.'));
+        next(new BadRequestError('Некорректный идентификатор карточки'));
       } else {
         next(err);
       }
     });
-};
+}
 
 const likeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
